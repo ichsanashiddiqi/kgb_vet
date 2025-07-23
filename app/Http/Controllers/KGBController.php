@@ -2,63 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kgb;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class KGBController extends Controller
+class KgbController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $kgbs = Kgb::with('asn')->latest()->get();
+        return view('kgb.index', compact('kgbs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $asns = User::all();
+        return view('kgb.create', compact('asns'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'tgl_kgb' => 'required|date',
+            'gaji_lama' => 'required|numeric',
+            'gaji_baru' => 'required|numeric',
+            'sk_kgb' => 'nullable|string',
+        ]);
+
+        Kgb::create($validated);
+        return redirect()->route('kgb.index')->with('success', 'Data KGB berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Kgb $kgb)
     {
-        //
+        return view('kgb.show', compact('kgb'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Kgb $kgb)
     {
-        //
+        $asns = User::all();
+        return view('kgb.edit', compact('kgb', 'asns'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Kgb $kgb)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'tgl_kgb' => 'required|date',
+            'gaji_lama' => 'required|numeric',
+            'gaji_baru' => 'required|numeric',
+            'sk_kgb' => 'nullable|string',
+        ]);
+
+        $kgb->update($validated);
+        return redirect()->route('kgb.index')->with('success', 'Data KGB berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Kgb $kgb)
     {
-        //
+        $kgb->delete();
+        return redirect()->route('kgb.index')->with('success', 'Data KGB berhasil dihapus.');
     }
 }

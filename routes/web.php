@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AsnController;
+use App\Http\Controllers\KGBController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -10,9 +11,7 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', function () {return view('dashboard');})->name('dashboard');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -21,6 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ASN - semua CRUD otomatis
     Route::resource('asn', AsnController::class);
+
+    Route::resource('kgb', KgbController::class);
 });
 
 // ⚠️ PENTING! Jangan lupa ini untuk route login/logout/register
